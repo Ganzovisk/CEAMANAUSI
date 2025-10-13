@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Relógio Regressivo — Para entrega deste Projeto</title>
+  <style>
+    :root{
+      --blue:#1d8af8;
+      --blue-dark:#034a8a;
+      --white:#ffffff;
+      --glass: rgba(255,255,255,0.06);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{
+      height:100%;
+      width:100%;
+      overflow:hidden;
+    }
+    body{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: linear-gradient(180deg,var(--blue) 0%, var(--blue-dark) 100%);
+      color:var(--white);
+    }
+    .container{
+      width:100%;
+      height:100%;
+      max-width:none;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      background:rgba(255,255,255,0.04);
+      text-align:center;
+      backdrop-filter: blur(8px);
+    }
+    h1{
+      font-size:2.4rem;
+      font-weight:700;
+      letter-spacing:0.5px;
+      margin-bottom:0.5rem;
+    }
+    p.subtitle{
+      font-size:1.2rem;
+      margin-bottom:2rem;
+      opacity:0.95;
+    }
+    .countdown{
+      display:flex;
+      gap:2rem;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top:1rem;
+    }
+    .card{
+      min-width:140px;
+      padding:24px 18px;
+      background:var(--white);
+      color:var(--blue-dark);
+      border-radius:16px;
+      box-shadow:0 10px 30px rgba(2,10,40,0.15);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      transition:transform 0.3s ease;
+    }
+    .card:hover{
+      transform:scale(1.05);
+    }
+    .value{
+      font-size:3.5rem;
+      font-weight:800;
+      line-height:1;
+    }
+    .label{
+      margin-top:10px;
+      font-size:0.9rem;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      opacity:0.85;
+    }
+    .small-note{
+      margin-top:2rem;
+      font-size:1rem;
+      opacity:0.9;
+    }
+    .controls{
+      margin-top:2.5rem;
+      display:flex;
+      gap:1rem;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    button{
+      cursor:pointer;
+      border:0;
+      padding:12px 20px;
+      border-radius:12px;
+      font-weight:600;
+      font-size:1rem;
+      transition:all 0.3s ease;
+    }
+    .btn-white{
+      background:var(--white);
+      color:var(--blue-dark);
+    }
+    .btn-white:hover{
+      background:#f1f1f1;
+    }
+    @media (max-width:520px){
+      h1{font-size:1.5rem}
+      .value{font-size:2rem}
+      .card{min-width:90px;padding:14px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="region" aria-label="Relógio regressivo para entrega do projeto">
+    <h1>Vamos entregar este projeto em:</h1>
+    <p class="subtitle">30/09/2026</p>
+    <p class="subtitle">Faltam...</p>
+
+    <div class="countdown" id="countdown" aria-live="polite">
+      <div class="card">
+        <div class="value" id="days">0</div>
+        <div class="label">Dias</div>
+      </div>
+      <div class="card">
+        <div class="value" id="hours">00</div>
+        <div class="label">Horas</div>
+      </div>
+      <div class="card">
+        <div class="value" id="minutes">00</div>
+        <div class="label">Minutos</div>
+      </div>
+      <div class="card">
+        <div class="value" id="seconds">00</div>
+        <div class="label">Segundos</div>
+      </div>
+    </div>
+
+    <div class="small-note" id="targetNote"></div>
+
+    <div class="controls">
+      <button class="btn-white" id="resetBtn">Vamos juntos entregar MANAUS I</button>
+    </div>
+  </div>
+
+  <script>
+    const DURATION_DAYS = 352;
+    const daysEl = document.getElementById('days');
+    const hoursEl = document.getElementById('hours');
+    const minutesEl = document.getElementById('minutes');
+    const secondsEl = document.getElementById('seconds');
+    const targetNote = document.getElementById('targetNote');
+    const resetBtn = document.getElementById('resetBtn');
+
+    // Define a data final real: 30 de outubro de 2026
+    const targetDate = new Date("2026-09-30T00:00:00");
+
+    let intervalId = null;
+
+    function pad(n){return String(n).padStart(2,'0');}
+
+    function updateCountdown(){
+      const now = new Date();
+      let diff = targetDate - now;
+      if(diff < 0) diff = 0;
+
+      const totalSeconds = Math.floor(diff/1000);
+      const days = Math.floor(totalSeconds / (3600*24));
+      const hours = Math.floor((totalSeconds % (3600*24)) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      daysEl.textContent = days;
+      hoursEl.textContent = pad(hours);
+      minutesEl.textContent = pad(minutes);
+      secondsEl.textContent = pad(seconds);
+
+      if(totalSeconds === 0){
+        clearInterval(intervalId);
+        targetNote.textContent = 'Prazo final atingido.';
+      }
+    }
+
+    function startInterval(){
+      if(intervalId) return;
+      intervalId = setInterval(updateCountdown,1000);
+      updateCountdown();
+    }
+
+    function resetCountdown(){
+      clearInterval(intervalId);
+      intervalId = null;
+      startInterval();
+    }
+
+    resetBtn.addEventListener('click', resetCountdown);
+    startInterval();
+  </script>
+</body>
+</html>
