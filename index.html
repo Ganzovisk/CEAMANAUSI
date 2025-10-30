@@ -24,16 +24,15 @@
       color: var(--white);
     }
 
-    /* 🧩 Layout principal */
     .layout {
       display: flex;
       width: 100%;
       height: 100vh;
+      gap: 20px;
     }
 
-    /* 🕒 Painel esquerdo */
     .left-panel {
-      flex: 0.45; /* ligeiramente menor que o slideshow */
+      flex: 0.45;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -42,6 +41,7 @@
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(8px);
       padding: 40px;
+      border-radius: 16px;
     }
 
     h1 {
@@ -73,10 +73,8 @@
     }
 
     .card:hover { transform: scale(1.05); }
-
     .value { font-size: 3.2rem; font-weight: 800; line-height: 1; }
     .label { margin-top: 10px; font-size: 0.9rem; text-transform: uppercase; opacity: 0.85; }
-
     .small-note { margin-top: 2rem; font-size: 1rem; opacity: 0.9; }
 
     .controls {
@@ -96,14 +94,9 @@
       transition: all 0.3s ease;
     }
 
-    .btn-white {
-      background: var(--white);
-      color: var(--blue-dark);
-    }
-
+    .btn-white { background: var(--white); color: var(--blue-dark); }
     .btn-white:hover { background: #f1f1f1; }
 
-    /* 🎞️ Painel direito */
     .right-panel {
       flex: 0.55;
       display: flex;
@@ -113,6 +106,7 @@
       position: relative;
       overflow: hidden;
       padding: 10px;
+      border-radius: 16px;
     }
 
     .slideshow {
@@ -141,34 +135,12 @@
 
     .slideshow img.active { opacity: 1; }
 
-    /* 📱 RESPONSIVIDADE */
     @media (max-width: 900px) {
       html, body { overflow-y: auto; overflow-x: hidden; }
-
-      .layout {
-        flex-direction: column;
-        height: auto;
-      }
-
-      .left-panel {
-        flex: none;
-        width: 100%;
-        padding: 30px 20px;
-      }
-
-      .right-panel {
-        flex: none;
-        width: 100%;
-        padding: 10px 0 30px 0;
-      }
-
-      .slideshow {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 16/9;
-        max-height: none;
-      }
-
+      .layout { flex-direction: column; height: auto; gap: 15px; }
+      .left-panel { flex: none; width: 100%; padding: 30px 20px; }
+      .right-panel { flex: none; width: 100%; padding: 10px 0 30px 0; }
+      .slideshow { width: 100%; height: auto; aspect-ratio: 16/9; max-height: none; }
       h1 { font-size: 1.8rem; }
       .value { font-size: 2.4rem; }
       .card { min-width: 90px; padding: 16px; }
@@ -182,16 +154,13 @@
   <div class="layout">
     <div class="left-panel">
       <h1>Vamos entregar este projeto em:</h1>
-
       <div class="countdown" id="countdown">
         <div class="card"><div class="value" id="days">0</div><div class="label">Dias</div></div>
         <div class="card"><div class="value" id="hours">00</div><div class="label">Horas</div></div>
         <div class="card"><div class="value" id="minutes">00</div><div class="label">Minutos</div></div>
         <div class="card"><div class="value" id="seconds">00</div><div class="label">Segundos</div></div>
       </div>
-
       <div class="small-note" id="targetNote"></div>
-
       <div class="controls">
         <button class="btn-white" id="resetBtn">Vamos juntos entregar MANAUS I</button>
       </div>
@@ -251,23 +220,40 @@
     resetBtn.addEventListener('click', resetCountdown);
     startInterval();
 
-    // Slideshow automático
+    // Slideshow lazy load
     const slideshow = document.getElementById('slideshow');
-    const totalSlides = 42; // Ajustado para 42
-    for(let i=1; i<=totalSlides; i++){
+    const totalSlides = 42;
+    const slides = [];
+    let current = 0;
+
+    function loadSlide(index){
+      if(slides[index]) return slides[index];
       const img = document.createElement('img');
-      img.src = `slides/Slide${i}.PNG`;
-      img.alt = `Slide ${i}`;
-      if(i===1) img.classList.add('active');
+      img.src = `Slide${index+1}.PNG`; // imagens no mesmo diretório
+      img.alt = `Slide ${index+1}`;
+      img.style.opacity = 0;
+      img.onload = () => { 
+        img.style.transition = 'opacity 1s ease-in-out'; 
+        img.style.opacity = 1; 
+      }
+      if(index === 0) img.classList.add('active');
       slideshow.appendChild(img);
+      slides[index] = img;
+      return img;
     }
 
-    const slides = document.querySelectorAll('.slideshow img');
-    let current = 0;
+    // Carrega o primeiro slide
+    loadSlide(0);
+
+    // Troca automática com lazy load
     setInterval(() => {
-      slides[current].classList.remove('active');
-      current = (current + 1) % slides.length;
-      slides[current].classList.add('active');
+      if(slides[current]) slides[current].classList.remove('active');
+      current = (current + 1) % totalSlides;
+      loadSlide(current).classList.add('active');
+
+      // Pré-carrega o próximo
+      const nextIndex = (current + 1) % totalSlides;
+      loadSlide(nextIndex);
     }, 8000);
   </script>
 </body>
