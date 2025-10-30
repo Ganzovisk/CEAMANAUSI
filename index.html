@@ -135,7 +135,6 @@
 
     .slideshow img.active { opacity: 1; }
 
-    /* Indicador de carregamento */
     .loading {
       position: absolute;
       top: 50%;
@@ -143,9 +142,11 @@
       transform: translate(-50%, -50%);
       color: var(--white);
       font-size: 1.2rem;
-      opacity: 0.8;
+      opacity: 0.9;
       text-align: center;
       animation: pulse 1.5s infinite;
+      z-index: 5;
+      pointer-events: none;
     }
 
     @keyframes pulse {
@@ -172,7 +173,7 @@
 <body>
   <div class="layout">
     <div class="left-panel">
-      <h1>Vamos entregar este projeto em:</h1>
+      <h1>Vamos juntos entregar este projeto em:</h1>
       <div class="countdown" id="countdown">
         <div class="card"><div class="value" id="days">0</div><div class="label">Dias</div></div>
         <div class="card"><div class="value" id="hours">00</div><div class="label">Horas</div></div>
@@ -181,7 +182,7 @@
       </div>
       <div class="small-note" id="targetNote"></div>
       <div class="controls">
-        <button class="btn-white" id="resetBtn">Vamos juntos entregar MANAUS I</button>
+        <button class="btn-white" id="resetBtn">Em 30/09/2026 </button>
       </div>
     </div>
 
@@ -232,53 +233,88 @@
       updateCountdown();
     }
 
-    function resetCountdown(){
-      clearInterval(intervalId);
-      intervalId = null;
-      startInterval();
-    }
-
-    resetBtn.addEventListener('click', resetCountdown);
+    resetBtn.addEventListener('click', startInterval);
     startInterval();
 
-    // Slideshow com loop infinito e indicador de carregamento
+    // === Slideshow com loop infinito e fallback para imagens faltantes ===
     const slideshow = document.getElementById('slideshow');
     const loadingText = document.getElementById('loadingText');
-    const totalSlides = 42;
+    const totalSlides = 42; // ajuste se for diferente
     const slides = [];
     let current = 0;
     let slideshowInterval = null;
 
+    // cria um placeholder SVG como data-uri quando imagem faltar
+    function placeholderDataURI(index) {
+      const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='900'>
+        <rect width='100%' height='100%' fill='#023a6b'/>
+        <text x='50%' y='50%' font-size='40' fill='white' text-anchor='middle' dominant-baseline='middle' font-family='Arial, Helvetica, sans-serif'>Slide ${index + 1} não encontrado</text>
+      </svg>`;
+      return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+    }
+
     function loadSlide(index) {
+      // se já existe, retorna
       if (slides[index]) return slides[index];
+
       const img = document.createElement('img');
-      img.src = `Slide${index + 1}.PNG`; // imagens no mesmo diretório
       img.alt = `Slide ${index + 1}`;
       img.style.opacity = 0;
 
-      img.onload = () => {
+      // handlers
+      const handleLoaded = () => {
         img.style.transition = 'opacity 1s ease-in-out';
-        img.style.opacity = 1;
+        img.style.opacity = '1';
 
-        // Remove o texto de carregamento e inicia o loop
+        // se for o primeiro, remove o loading e inicia o slideshow
         if (index === 0 && loadingText) {
           loadingText.remove();
+          img.classList.add('active');
           startSlideshow();
         }
       };
 
-      if (index === 0) img.classList.add('active');
+      const handleError = () => {
+        // substitui por placeholder (evita tela preta)
+        if (!img.dataset.fallback) {
+          img.dataset.fallback = '1';
+          img.src = placeholderDataURI(index);
+        } else {
+          // se o placeholder falhar (muito improvável), ainda garante remoção do loading
+          if (index === 0 && loadingText) {
+            loadingText.remove();
+            img.classList.add('active');
+            startSlideshow();
+          }
+        }
+      };
+
+      img.onload = handleLoaded;
+      img.onerror = handleError;
+
+      // primeiro atribuimos src (para começar o carregamento) - nomes: Slide1.PNG ... Slide42.PNG
+      img.src = `Slide${index + 1}.PNG`;
+
+      // adiciona ao container e ao array
       slideshow.appendChild(img);
       slides[index] = img;
       return img;
     }
 
     function showNextSlide() {
-      slides[current].classList.remove('active');
+      // garante que o slide atual existe/foi criado
+      loadSlide(current);
+      // remove active do atual (caso exista)
+      if (slides[current]) slides[current].classList.remove('active');
+
+      // avança
       current = (current + 1) % totalSlides;
+
+      // garante que o próximo seja carregado e marque active
       loadSlide(current).classList.add('active');
-      const nextIndex = (current + 1) % totalSlides;
-      loadSlide(nextIndex);
+
+      // pré-carrega o próximo para evitar travamentos
+      loadSlide((current + 1) % totalSlides);
     }
 
     function startSlideshow() {
@@ -286,7 +322,7 @@
       slideshowInterval = setInterval(showNextSlide, 8000);
     }
 
-    // Carrega o primeiro slide
+    // inicia carregando o slide 0 (começa o fluxo)
     loadSlide(0);
   </script>
 </body>
