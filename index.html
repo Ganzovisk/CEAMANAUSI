@@ -135,6 +135,25 @@
 
     .slideshow img.active { opacity: 1; }
 
+    /* Indicador de carregamento */
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: var(--white);
+      font-size: 1.2rem;
+      opacity: 0.8;
+      text-align: center;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.3; }
+      50% { opacity: 1; }
+      100% { opacity: 0.3; }
+    }
+
     @media (max-width: 900px) {
       html, body { overflow-y: auto; overflow-x: hidden; }
       .layout { flex-direction: column; height: auto; gap: 15px; }
@@ -167,7 +186,9 @@
     </div>
 
     <div class="right-panel">
-      <div class="slideshow" id="slideshow"></div>
+      <div class="slideshow" id="slideshow">
+        <div class="loading" id="loadingText">Carregando slides...</div>
+      </div>
     </div>
   </div>
 
@@ -220,41 +241,53 @@
     resetBtn.addEventListener('click', resetCountdown);
     startInterval();
 
-    // Slideshow lazy load
+    // Slideshow com loop infinito e indicador de carregamento
     const slideshow = document.getElementById('slideshow');
+    const loadingText = document.getElementById('loadingText');
     const totalSlides = 42;
     const slides = [];
     let current = 0;
+    let slideshowInterval = null;
 
-    function loadSlide(index){
-      if(slides[index]) return slides[index];
+    function loadSlide(index) {
+      if (slides[index]) return slides[index];
       const img = document.createElement('img');
-      img.src = `Slide${index+1}.PNG`; // imagens no mesmo diretório
-      img.alt = `Slide ${index+1}`;
+      img.src = `Slide${index + 1}.PNG`; // imagens no mesmo diretório
+      img.alt = `Slide ${index + 1}`;
       img.style.opacity = 0;
-      img.onload = () => { 
-        img.style.transition = 'opacity 1s ease-in-out'; 
-        img.style.opacity = 1; 
-      }
-      if(index === 0) img.classList.add('active');
+
+      img.onload = () => {
+        img.style.transition = 'opacity 1s ease-in-out';
+        img.style.opacity = 1;
+
+        // Remove o texto de carregamento e inicia o loop
+        if (index === 0 && loadingText) {
+          loadingText.remove();
+          startSlideshow();
+        }
+      };
+
+      if (index === 0) img.classList.add('active');
       slideshow.appendChild(img);
       slides[index] = img;
       return img;
     }
 
-    // Carrega o primeiro slide
-    loadSlide(0);
-
-    // Troca automática com lazy load
-    setInterval(() => {
-      if(slides[current]) slides[current].classList.remove('active');
+    function showNextSlide() {
+      slides[current].classList.remove('active');
       current = (current + 1) % totalSlides;
       loadSlide(current).classList.add('active');
-
-      // Pré-carrega o próximo
       const nextIndex = (current + 1) % totalSlides;
       loadSlide(nextIndex);
-    }, 8000);
+    }
+
+    function startSlideshow() {
+      if (slideshowInterval) return;
+      slideshowInterval = setInterval(showNextSlide, 8000);
+    }
+
+    // Carrega o primeiro slide
+    loadSlide(0);
   </script>
 </body>
 </html>
