@@ -6,117 +6,174 @@
   <title>Relógio Regressivo — Entrega do Projeto</title>
 
   <style>
-    :root{
-      --blue:#1d8af8;
-      --blue-dark:#034a8a;
-      --white:#ffffff;
+    :root {
+      --blue: #1d8af8;
+      --blue-dark: #034a8a;
+      --white: #ffffff;
       font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
 
-    *{box-sizing:border-box;margin:0;padding:0;}
-    html,body{height:100%;width:100%;overflow:hidden;}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; width: 100%; overflow: hidden; }
 
-    body{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background: linear-gradient(180deg,var(--blue) 0%, var(--blue-dark) 100%);
-      color:var(--white);
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, var(--blue) 0%, var(--blue-dark) 100%);
+      color: var(--white);
     }
 
-    .layout{
-      display:flex;
-      width:100%;
-      height:100vh;
+    /* 🧩 Layout principal */
+    .layout {
+      display: flex;
+      width: 100%;
+      height: 100vh;
     }
 
-    .left-panel{
-      flex:1;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      text-align:center;
-      background:rgba(255,255,255,0.05);
+    /* 🕒 Painel esquerdo */
+    .left-panel {
+      flex: 0.45; /* ligeiramente menor que o slideshow */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(8px);
-      padding:40px;
+      padding: 40px;
     }
 
-    h1{font-size:2.4rem;font-weight:700;margin-bottom:0.5rem;}
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
 
     .countdown {
-      display:flex;
-      gap:2rem;
-      justify-content:center;
-      flex-wrap:nowrap;
-      margin-top:1rem;
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: nowrap;
+      margin-top: 1rem;
     }
 
-    .card{
-      min-width:140px;
-      padding:24px 18px;
-      background:var(--white);
-      color:var(--blue-dark);
-      border-radius:16px;
-      box-shadow:0 10px 30px rgba(2,10,40,0.15);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      transition:transform 0.3s ease;
+    .card {
+      min-width: 120px;
+      padding: 22px 16px;
+      background: var(--white);
+      color: var(--blue-dark);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(2, 10, 40, 0.15);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease;
     }
 
-    .card:hover{transform:scale(1.05);}
-    .value{font-size:3.5rem;font-weight:800;line-height:1;}
-    .label{margin-top:10px;font-size:0.9rem;text-transform:uppercase;opacity:0.85;}
-    .small-note{margin-top:2rem;font-size:1rem;opacity:0.9;}
-    .controls{margin-top:2.5rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
-    button{
-      cursor:pointer;border:0;padding:12px 20px;border-radius:12px;
-      font-weight:600;font-size:1rem;transition:all 0.3s ease;
-    }
-    .btn-white{background:var(--white);color:var(--blue-dark);}
-    .btn-white:hover{background:#f1f1f1;}
+    .card:hover { transform: scale(1.05); }
 
-    .right-panel{
-      flex:1;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      background:rgba(255,255,255,0.08);
-      position:relative;
+    .value { font-size: 3.2rem; font-weight: 800; line-height: 1; }
+    .label { margin-top: 10px; font-size: 0.9rem; text-transform: uppercase; opacity: 0.85; }
+
+    .small-note { margin-top: 2rem; font-size: 1rem; opacity: 0.9; }
+
+    .controls {
+      margin-top: 2.5rem;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    button {
+      cursor: pointer;
+      border: 0;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn-white {
+      background: var(--white);
+      color: var(--blue-dark);
+    }
+
+    .btn-white:hover { background: #f1f1f1; }
+
+    /* 🎞️ Painel direito */
+    .right-panel {
+      flex: 0.55;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.08);
+      position: relative;
+      overflow: hidden;
+      padding: 10px;
     }
 
     .slideshow {
-      width:100%;
-      height:90%;
-      border:3px solid var(--blue);
-      border-radius:16px;
-      overflow:hidden;
-      box-shadow:0 10px 30px rgba(0,0,0,0.3);
-      position:relative;
-    }
-
-    .slideshow img {
-      position:absolute;
-      width:100%;
-      height:100%;
-      object-fit:contain;
-      opacity:0;
-      transition:opacity 1s ease-in-out;
-      border-radius:16px;
+      width: 100%;
+      height: auto;
+      max-height: 90vh;
+      border: 3px solid var(--blue);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      position: relative;
+      aspect-ratio: 16/9;
       background: var(--blue-dark);
     }
 
-    .slideshow img.active {opacity:1;}
+    .slideshow img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      border-radius: 16px;
+      background: var(--blue-dark);
+    }
 
-    @media (max-width:900px){
-      .layout{flex-direction:column;}
-      .left-panel, .right-panel{flex:none;width:100%;height:50vh;}
-      .slideshow{height:100%;}
-      h1{font-size:1.8rem;}
-      .value{font-size:2.5rem;}
-      .countdown {flex-wrap: wrap; gap: 1rem;}
+    .slideshow img.active { opacity: 1; }
+
+    /* 📱 RESPONSIVIDADE */
+    @media (max-width: 900px) {
+      html, body { overflow-y: auto; overflow-x: hidden; }
+
+      .layout {
+        flex-direction: column;
+        height: auto;
+      }
+
+      .left-panel {
+        flex: none;
+        width: 100%;
+        padding: 30px 20px;
+      }
+
+      .right-panel {
+        flex: none;
+        width: 100%;
+        padding: 10px 0 30px 0;
+      }
+
+      .slideshow {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16/9;
+        max-height: none;
+      }
+
+      h1 { font-size: 1.8rem; }
+      .value { font-size: 2.4rem; }
+      .card { min-width: 90px; padding: 16px; }
+      .countdown { flex-wrap: wrap; gap: 1rem; }
+      button { font-size: 0.9rem; padding: 10px 16px; }
     }
   </style>
 </head>
@@ -146,7 +203,7 @@
   </div>
 
   <script>
-    // Countdown
+    // Contador regressivo
     const daysEl = document.getElementById('days');
     const hoursEl = document.getElementById('hours');
     const minutesEl = document.getElementById('minutes');
@@ -157,7 +214,7 @@
     const targetDate = new Date("2026-09-30T00:00:00");
     let intervalId = null;
 
-    function pad(n){return String(n).padStart(2,'0');}
+    function pad(n){ return String(n).padStart(2,'0'); }
 
     function updateCountdown(){
       const now = new Date();
@@ -196,10 +253,10 @@
 
     // Slideshow automático
     const slideshow = document.getElementById('slideshow');
-    const totalSlides = 43; // Total de imagens
+    const totalSlides = 42; // Ajustado para 42
     for(let i=1; i<=totalSlides; i++){
       const img = document.createElement('img');
-      img.src = `Slide${i}.PNG`;
+      img.src = `slides/Slide${i}.PNG`;
       img.alt = `Slide ${i}`;
       if(i===1) img.classList.add('active');
       slideshow.appendChild(img);
@@ -211,7 +268,7 @@
       slides[current].classList.remove('active');
       current = (current + 1) % slides.length;
       slides[current].classList.add('active');
-    }, 10000);
+    }, 8000);
   </script>
 </body>
 </html>
