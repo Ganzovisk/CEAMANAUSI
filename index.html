@@ -236,94 +236,41 @@
     resetBtn.addEventListener('click', startInterval);
     startInterval();
 
-    // === Slideshow com loop infinito e fallback para imagens faltantes ===
+    // === LOOP CONTÍNUO DOS 42 SLIDES ===
     const slideshow = document.getElementById('slideshow');
     const loadingText = document.getElementById('loadingText');
-    const totalSlides = 42; // ajuste se for diferente
+    const totalSlides = 42;
     const slides = [];
     let current = 0;
     let slideshowInterval = null;
 
-    // cria um placeholder SVG como data-uri quando imagem faltar
-    function placeholderDataURI(index) {
-      const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='900'>
-        <rect width='100%' height='100%' fill='#023a6b'/>
-        <text x='50%' y='50%' font-size='40' fill='white' text-anchor='middle' dominant-baseline='middle' font-family='Arial, Helvetica, sans-serif'>Slide ${index + 1} não encontrado</text>
-      </svg>`;
-      return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
-    }
-
-    function loadSlide(index) {
-      // se já existe, retorna
-      if (slides[index]) return slides[index];
-
+    // Cria todas as imagens de uma vez
+    for (let i = 0; i < totalSlides; i++) {
       const img = document.createElement('img');
-      img.alt = `Slide ${index + 1}`;
-      img.style.opacity = 0;
-
-      // handlers
-      const handleLoaded = () => {
-        img.style.transition = 'opacity 1s ease-in-out';
-        img.style.opacity = '1';
-
-        // se for o primeiro, remove o loading e inicia o slideshow
-        if (index === 0 && loadingText) {
-          loadingText.remove();
-          img.classList.add('active');
-          startSlideshow();
-        }
-      };
-
-      const handleError = () => {
-        // substitui por placeholder (evita tela preta)
-        if (!img.dataset.fallback) {
-          img.dataset.fallback = '1';
-          img.src = placeholderDataURI(index);
-        } else {
-          // se o placeholder falhar (muito improvável), ainda garante remoção do loading
-          if (index === 0 && loadingText) {
-            loadingText.remove();
-            img.classList.add('active');
-            startSlideshow();
-          }
-        }
-      };
-
-      img.onload = handleLoaded;
-      img.onerror = handleError;
-
-      // primeiro atribuimos src (para começar o carregamento) - nomes: Slide1.PNG ... Slide42.PNG
-      img.src = `Slide${index + 1}.PNG`;
-
-      // adiciona ao container e ao array
+      img.src = `Slide${i + 1}.PNG`;
+      img.alt = `Slide ${i + 1}`;
       slideshow.appendChild(img);
-      slides[index] = img;
-      return img;
+      slides.push(img);
     }
 
-    function showNextSlide() {
-      // garante que o slide atual existe/foi criado
-      loadSlide(current);
-      // remove active do atual (caso exista)
-      if (slides[current]) slides[current].classList.remove('active');
-
-      // avança
-      current = (current + 1) % totalSlides;
-
-      // garante que o próximo seja carregado e marque active
-      loadSlide(current).classList.add('active');
-
-      // pré-carrega o próximo para evitar travamentos
-      loadSlide((current + 1) % totalSlides);
+    // Função para mostrar o slide atual
+    function showSlide(index) {
+      slides.forEach((img, i) => {
+        img.classList.toggle('active', i === index);
+      });
     }
 
+    // Inicia o slideshow
     function startSlideshow() {
-      if (slideshowInterval) return;
-      slideshowInterval = setInterval(showNextSlide, 8000);
+      loadingText.remove();
+      showSlide(current);
+      slideshowInterval = setInterval(() => {
+        current = (current + 1) % totalSlides;
+        showSlide(current);
+      }, 8000); // muda a cada 8 segundos
     }
 
-    // inicia carregando o slide 0 (começa o fluxo)
-    loadSlide(0);
+    window.addEventListener('load', startSlideshow);
   </script>
 </body>
 </html>
