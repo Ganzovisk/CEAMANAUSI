@@ -24,12 +24,7 @@
       color: var(--white);
     }
 
-    .layout {
-      display: flex;
-      width: 100%;
-      height: 100vh;
-      gap: 20px;
-    }
+    .layout { display: flex; width: 100%; height: 100vh; gap: 20px; }
 
     .left-panel {
       flex: 0.45;
@@ -44,22 +39,12 @@
       border-radius: 16px;
     }
 
-    h1 {
-      font-size: 2.4rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
+    h1 { font-size: 2.4rem; font-weight: 700; margin-bottom: 0.5rem; }
 
-    .countdown {
-      display: flex;
-      gap: 2rem;
-      justify-content: center;
-      flex-wrap: nowrap;
-      margin-top: 1rem;
-    }
+    .countdown { display: flex; gap: 2rem; justify-content: center; flex-wrap: nowrap; margin-top: 1rem; }
 
     .card {
-      min-width: 120px;
+      min-width: 50px;
       padding: 22px 16px;
       background: var(--white);
       color: var(--blue-dark);
@@ -77,23 +62,9 @@
     .label { margin-top: 10px; font-size: 0.9rem; text-transform: uppercase; opacity: 0.85; }
     .small-note { margin-top: 2rem; font-size: 1rem; opacity: 0.9; }
 
-    .controls {
-      margin-top: 2.5rem;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
+    .controls { margin-top: 2.5rem; display: flex; justify-content: center; flex-wrap: wrap; }
 
-    button {
-      cursor: pointer;
-      border: 0;
-      padding: 12px 20px;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 1rem;
-      transition: all 0.3s ease;
-    }
-
+    button { cursor: pointer; border: 0; padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 1rem; transition: all 0.3s ease; }
     .btn-white { background: var(--white); color: var(--blue-dark); }
     .btn-white:hover { background: #f1f1f1; }
 
@@ -114,7 +85,7 @@
       height: auto;
       max-height: 90vh;
       border: 3px solid var(--blue);
-      border-radius: 16px;
+      border-radius: 1px;
       overflow: hidden;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       position: relative;
@@ -193,19 +164,28 @@
     </div>
   </div>
 
+  <!-- Áudio do batimento cardíaco -->
+  <audio id="heartBeat" src="batimento_cardiaco.mp3" preload="auto"></audio>
+
   <script>
-    // Contador regressivo
+    // Contador regressivoQuwe
     const daysEl = document.getElementById('days');
     const hoursEl = document.getElementById('hours');
     const minutesEl = document.getElementById('minutes');
     const secondsEl = document.getElementById('seconds');
     const targetNote = document.getElementById('targetNote');
     const resetBtn = document.getElementById('resetBtn');
+    const heartBeat = document.getElementById('heartBeat');
 
     const targetDate = new Date("2026-09-30T00:00:00");
     let intervalId = null;
 
     function pad(n){ return String(n).padStart(2,'0'); }
+
+    function playHeartBeat() {
+      heartBeat.currentTime = 0;
+      heartBeat.play();
+    }
 
     function updateCountdown(){
       const now = new Date();
@@ -220,6 +200,9 @@
       hoursEl.textContent = pad(hours);
       minutesEl.textContent = pad(minutes);
       secondsEl.textContent = pad(seconds);
+
+      // Toca o batimento a cada segundo
+      playHeartBeat();
 
       if(totalSeconds === 0){
         clearInterval(intervalId);
@@ -239,12 +222,11 @@
     // === LOOP CONTÍNUO DOS 42 SLIDES ===
     const slideshow = document.getElementById('slideshow');
     const loadingText = document.getElementById('loadingText');
-    const totalSlides = 42;
+    const totalSlides = 46;
     const slides = [];
     let current = 0;
     let slideshowInterval = null;
 
-    // Cria todas as imagens de uma vez
     for (let i = 0; i < totalSlides; i++) {
       const img = document.createElement('img');
       img.src = `Slide${i + 1}.PNG`;
@@ -253,21 +235,19 @@
       slides.push(img);
     }
 
-    // Função para mostrar o slide atual
     function showSlide(index) {
       slides.forEach((img, i) => {
         img.classList.toggle('active', i === index);
       });
     }
 
-    // Inicia o slideshow
     function startSlideshow() {
       loadingText.remove();
       showSlide(current);
       slideshowInterval = setInterval(() => {
         current = (current + 1) % totalSlides;
         showSlide(current);
-      }, 8000); // muda a cada 8 segundos
+      }, 8000);
     }
 
     window.addEventListener('load', startSlideshow);
