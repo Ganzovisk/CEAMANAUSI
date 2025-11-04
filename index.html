@@ -63,14 +63,14 @@
     .label { margin-top: 6px; font-size: 0.8rem; text-transform: uppercase; opacity: 0.85; }
     .small-note { margin-top: 1rem; font-size: 0.9rem; opacity: 0.9; }
 
-    /* Slide (sem borda, fundo transparente e integrado ao degradê) */
+    /* Slide (continua com o fundo em degradê) */
     .bottom-panel {
       flex: 1;
       width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: transparent;
+      background: transparent; /* 👈 fundo transparente para mostrar o degradê */
       padding: 0;
       margin: 0;
       z-index: 1;
@@ -79,12 +79,13 @@
     .slideshow {
       width: 95%;
       height: 95%;
-      border: none;              /* 🔹 sem borda */
-      border-radius: 0;          /* 🔹 sem cantos arredondados */
+      border: none; /* 🔹 removida a borda */
+      border-radius: 12px;
       overflow: hidden;
       position: relative;
-      background: transparent;   /* 🔹 fundo transparente */
-      box-shadow: none;          /* 🔹 sem sombra */
+      background: transparent; /* 🔹 fundo transparente */
+      backdrop-filter: blur(2px);
+      box-shadow: none; /* 🔹 sem sombra */
       cursor: pointer;
     }
 
@@ -117,6 +118,62 @@
       0% { opacity: 0.3; }
       50% { opacity: 1; }
       100% { opacity: 0.3; }
+    }
+
+    /* 📱 Ajustes e centralização para telas pequenas */
+    @media (max-width: 768px) {
+      body {
+        overflow-y: auto; /* permite rolar se precisar no celular */
+      }
+
+      .top-panel {
+        padding: 40px 10px;          /* mais espaço nas bordas */
+        justify-content: center;     /* centraliza verticalmente */
+        align-items: center;         /* centraliza horizontalmente */
+        text-align: center;
+        min-height: 45vh;            /* ocupa cerca de metade da tela */
+      }
+
+      h1 {
+        font-size: 1.3rem;
+        margin-bottom: 0.8rem;
+      }
+
+      .countdown {
+        gap: 0.8rem;
+        flex-wrap: wrap;             /* quebra linha se faltar espaço */
+        justify-content: center;
+      }
+
+      .card {
+        min-width: 60px;
+        padding: 12px;
+      }
+
+      .value {
+        font-size: 2rem;
+      }
+
+      .label {
+        font-size: 0.7rem;
+      }
+
+      .small-note {
+        font-size: 0.8rem;
+        margin-top: 0.8rem;
+      }
+
+      .bottom-panel {
+        flex: 1;
+        align-items: flex-start;    /* mantém o slide logo abaixo */
+        padding-bottom: 10px;
+      }
+
+      .slideshow {
+        width: 95%;
+        height: auto;
+        aspect-ratio: 16 / 9;       /* mantém proporção ideal do slide */
+      }
     }
   </style>
 </head>
