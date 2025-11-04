@@ -24,7 +24,7 @@
       overflow: hidden;
     }
 
-    /* Relógio no topo (20%) */
+    /* Relógio no topo */
     .top-panel {
       flex: 0 0 20%;
       display: flex;
@@ -32,7 +32,6 @@
       justify-content: center;
       align-items: center;
       text-align: center;
-      background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(8px);
       padding: 20px;
       z-index: 2;
@@ -64,29 +63,28 @@
     .label { margin-top: 6px; font-size: 0.8rem; text-transform: uppercase; opacity: 0.85; }
     .small-note { margin-top: 1rem; font-size: 0.9rem; opacity: 0.9; }
 
-    /* Slide (80%) */
+    /* Slide (sem borda, fundo transparente e integrado ao degradê) */
     .bottom-panel {
-      flex: 0 0 80%;
+      flex: 1;
       width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 10px 20px 40px 20px; /* 👈 Espaço adicionado abaixo (40px) */
-      background: rgba(255, 255, 255, 0.08);
-      position: relative;
-      top: -10px; /* Mantém a leve elevação */
+      background: transparent;
+      padding: 0;
+      margin: 0;
       z-index: 1;
     }
 
     .slideshow {
       width: 95%;
       height: 95%;
-      border: 3px solid var(--blue);
-      border-radius: 12px;
+      border: none;              /* 🔹 sem borda */
+      border-radius: 0;          /* 🔹 sem cantos arredondados */
       overflow: hidden;
       position: relative;
-      background: var(--blue-dark);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      background: transparent;   /* 🔹 fundo transparente */
+      box-shadow: none;          /* 🔹 sem sombra */
       cursor: pointer;
     }
 
@@ -97,7 +95,6 @@
       object-fit: contain;
       opacity: 0;
       transition: opacity 1s ease-in-out;
-      background: var(--blue-dark);
     }
 
     .slideshow img.active { opacity: 1; }
@@ -125,7 +122,7 @@
 </head>
 
 <body>
-  <!-- Relógio (20%) -->
+  <!-- Relógio -->
   <div class="top-panel">
     <h1>Vamos juntos entregar este projeto em:</h1>
     <div class="countdown" id="countdown">
@@ -137,7 +134,7 @@
     <div class="small-note" id="targetNote"></div>
   </div>
 
-  <!-- Slide (80%) -->
+  <!-- Slide -->
   <div class="bottom-panel">
     <div class="slideshow" id="slideshow">
       <div class="loading" id="loadingText">Carregando slides...</div>
