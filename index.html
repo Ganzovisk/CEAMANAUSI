@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Relógio Regressivo — Entrega do Projeto</title>
+  <title>Relógio e Apresentação</title>
 
   <style>
     :root {
@@ -14,20 +14,19 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; width: 100%; overflow: hidden; }
+    html, body { height: 100%; width: 100%; }
 
     body {
       display: flex;
-      align-items: center;
-      justify-content: center;
+      flex-direction: column;
       background: linear-gradient(180deg, var(--blue) 0%, var(--blue-dark) 100%);
       color: var(--white);
+      overflow: hidden;
     }
 
-    .layout { display: flex; width: 100%; height: 100vh; gap: 20px; }
-
-    .left-panel {
-      flex: 0.45;
+    /* Relógio no topo (20%) */
+    .top-panel {
+      flex: 0 0 20%;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -35,62 +34,60 @@
       text-align: center;
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(8px);
-      padding: 40px;
-      border-radius: 16px;
+      padding: 20px;
+      z-index: 2;
     }
 
-    h1 { font-size: 2.4rem; font-weight: 700; margin-bottom: 0.5rem; }
+    h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
 
-    .countdown { display: flex; gap: 2rem; justify-content: center; flex-wrap: nowrap; margin-top: 1rem; }
+    .countdown {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
 
     .card {
-      min-width: 50px;
-      padding: 22px 16px;
+      min-width: 60px;
+      padding: 16px;
       background: var(--white);
       color: var(--blue-dark);
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(2, 10, 40, 0.15);
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(2, 10, 40, 0.15);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      transition: transform 0.3s ease;
     }
 
-    .card:hover { transform: scale(1.05); }
-    .value { font-size: 3.2rem; font-weight: 800; line-height: 1; }
-    .label { margin-top: 10px; font-size: 0.9rem; text-transform: uppercase; opacity: 0.85; }
-    .small-note { margin-top: 2rem; font-size: 1rem; opacity: 0.9; }
+    .value { font-size: 2.6rem; font-weight: 800; line-height: 1; }
+    .label { margin-top: 6px; font-size: 0.8rem; text-transform: uppercase; opacity: 0.85; }
+    .small-note { margin-top: 1rem; font-size: 0.9rem; opacity: 0.9; }
 
-    .controls { margin-top: 2.5rem; display: flex; justify-content: center; flex-wrap: wrap; }
-
-    button { cursor: pointer; border: 0; padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 1rem; transition: all 0.3s ease; }
-    .btn-white { background: var(--white); color: var(--blue-dark); }
-    .btn-white:hover { background: #f1f1f1; }
-
-    .right-panel {
-      flex: 0.55;
+    /* Slide (80%) */
+    .bottom-panel {
+      flex: 0 0 80%;
+      width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: 10px 20px;
       background: rgba(255, 255, 255, 0.08);
       position: relative;
-      overflow: hidden;
-      padding: 10px;
-      border-radius: 16px;
+      top: -10px; /* 👈 Eleva o slide um pouco, sem sobrepor */
+      z-index: 1;
     }
 
     .slideshow {
-      width: 100%;
-      height: auto;
-      max-height: 90vh;
+      width: 95%;
+      height: 95%;
       border: 3px solid var(--blue);
-      border-radius: 1px;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       position: relative;
-      aspect-ratio: 16/9;
       background: var(--blue-dark);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
     }
 
     .slideshow img {
@@ -100,7 +97,6 @@
       object-fit: contain;
       opacity: 0;
       transition: opacity 1s ease-in-out;
-      border-radius: 16px;
       background: var(--blue-dark);
     }
 
@@ -125,57 +121,39 @@
       50% { opacity: 1; }
       100% { opacity: 0.3; }
     }
-
-    @media (max-width: 900px) {
-      html, body { overflow-y: auto; overflow-x: hidden; }
-      .layout { flex-direction: column; height: auto; gap: 15px; }
-      .left-panel { flex: none; width: 100%; padding: 30px 20px; }
-      .right-panel { flex: none; width: 100%; padding: 10px 0 30px 0; }
-      .slideshow { width: 100%; height: auto; aspect-ratio: 16/9; max-height: none; }
-      h1 { font-size: 1.8rem; }
-      .value { font-size: 2.4rem; }
-      .card { min-width: 90px; padding: 16px; }
-      .countdown { flex-wrap: wrap; gap: 1rem; }
-      button { font-size: 0.9rem; padding: 10px 16px; }
-    }
   </style>
 </head>
 
 <body>
-  <div class="layout">
-    <div class="left-panel">
-      <h1>Vamos juntos entregar este projeto em:</h1>
-      <div class="countdown" id="countdown">
-        <div class="card"><div class="value" id="days">0</div><div class="label">Dias</div></div>
-        <div class="card"><div class="value" id="hours">00</div><div class="label">Horas</div></div>
-        <div class="card"><div class="value" id="minutes">00</div><div class="label">Minutos</div></div>
-        <div class="card"><div class="value" id="seconds">00</div><div class="label">Segundos</div></div>
-      </div>
-      <div class="small-note" id="targetNote"></div>
-      <div class="controls">
-        <button class="btn-white" id="resetBtn">Em 30/09/2026 </button>
-      </div>
+  <!-- Relógio (20%) -->
+  <div class="top-panel">
+    <h1>Vamos juntos entregar este projeto em:</h1>
+    <div class="countdown" id="countdown">
+      <div class="card"><div class="value" id="days">0</div><div class="label">Dias</div></div>
+      <div class="card"><div class="value" id="hours">00</div><div class="label">Horas</div></div>
+      <div class="card"><div class="value" id="minutes">00</div><div class="label">Minutos</div></div>
+      <div class="card"><div class="value" id="seconds">00</div><div class="label">Segundos</div></div>
     </div>
+    <div class="small-note" id="targetNote"></div>
+  </div>
 
-    <div class="right-panel">
-      <div class="slideshow" id="slideshow">
-        <div class="loading" id="loadingText">Carregando slides...</div>
-      </div>
+  <!-- Slide (80%) -->
+  <div class="bottom-panel">
+    <div class="slideshow" id="slideshow">
+      <div class="loading" id="loadingText">Carregando slides...</div>
     </div>
   </div>
 
-  <!-- Áudio do batimento cardíaco -->
-  <audio id="heartBeat" src="batimento_cardiaco.mp3" preload="auto"></audio>
+  <audio id="heartBeat" src="batimento_cardiaco.wav" preload="auto"></audio>
 
   <script>
-    // Contador regressivoQuwe
     const daysEl = document.getElementById('days');
     const hoursEl = document.getElementById('hours');
     const minutesEl = document.getElementById('minutes');
     const secondsEl = document.getElementById('seconds');
     const targetNote = document.getElementById('targetNote');
-    const resetBtn = document.getElementById('resetBtn');
     const heartBeat = document.getElementById('heartBeat');
+    const slideshow = document.getElementById('slideshow');
 
     const targetDate = new Date("2026-09-30T00:00:00");
     let intervalId = null;
@@ -201,7 +179,6 @@
       minutesEl.textContent = pad(minutes);
       secondsEl.textContent = pad(seconds);
 
-      // Toca o batimento a cada segundo
       playHeartBeat();
 
       if(totalSeconds === 0){
@@ -216,16 +193,19 @@
       updateCountdown();
     }
 
-    resetBtn.addEventListener('click', startInterval);
     startInterval();
 
-    // === LOOP CONTÍNUO DOS 42 SLIDES ===
-    const slideshow = document.getElementById('slideshow');
+    // Reinicia contador ao clicar no slide
+    slideshow.addEventListener('click', () => {
+      clearInterval(intervalId);
+      startInterval();
+    });
+
+    // Slideshow
     const loadingText = document.getElementById('loadingText');
     const totalSlides = 46;
     const slides = [];
     let current = 0;
-    let slideshowInterval = null;
 
     for (let i = 0; i < totalSlides; i++) {
       const img = document.createElement('img');
@@ -244,7 +224,7 @@
     function startSlideshow() {
       loadingText.remove();
       showSlide(current);
-      slideshowInterval = setInterval(() => {
+      setInterval(() => {
         current = (current + 1) % totalSlides;
         showSlide(current);
       }, 8000);
