@@ -24,7 +24,7 @@
       overflow: hidden;
     }
 
-    /* Relógio no topo */
+    /* Relógio */
     .top-panel {
       flex: 0 0 20%;
       display: flex;
@@ -63,14 +63,14 @@
     .label { margin-top: 6px; font-size: 0.8rem; text-transform: uppercase; opacity: 0.85; }
     .small-note { margin-top: 1rem; font-size: 0.9rem; opacity: 0.9; }
 
-    /* Slide (continua com o fundo em degradê) */
+    /* Slide */
     .bottom-panel {
       flex: 1;
       width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: transparent; /* 👈 fundo transparente para mostrar o degradê */
+      background: transparent;
       padding: 0;
       margin: 0;
       z-index: 1;
@@ -79,13 +79,13 @@
     .slideshow {
       width: 95%;
       height: 95%;
-      border: none; /* 🔹 removida a borda */
+      border: none;
       border-radius: 12px;
       overflow: hidden;
       position: relative;
-      background: transparent; /* 🔹 fundo transparente */
+      background: transparent;
       backdrop-filter: blur(2px);
-      box-shadow: none; /* 🔹 sem sombra */
+      box-shadow: none;
       cursor: pointer;
     }
 
@@ -120,18 +120,16 @@
       100% { opacity: 0.3; }
     }
 
-    /* 📱 Ajustes e centralização para telas pequenas */
+    /* Responsivo */
     @media (max-width: 768px) {
-      body {
-        overflow-y: auto; /* permite rolar se precisar no celular */
-      }
+      body { overflow-y: auto; }
 
       .top-panel {
-        padding: 40px 10px;          /* mais espaço nas bordas */
-        justify-content: center;     /* centraliza verticalmente */
-        align-items: center;         /* centraliza horizontalmente */
+        padding: 40px 10px;
+        justify-content: center;
+        align-items: center;
         text-align: center;
-        min-height: 45vh;            /* ocupa cerca de metade da tela */
+        min-height: 45vh;
       }
 
       h1 {
@@ -141,7 +139,7 @@
 
       .countdown {
         gap: 0.8rem;
-        flex-wrap: wrap;             /* quebra linha se faltar espaço */
+        flex-wrap: wrap;
         justify-content: center;
       }
 
@@ -150,29 +148,20 @@
         padding: 12px;
       }
 
-      .value {
-        font-size: 2rem;
-      }
-
-      .label {
-        font-size: 0.7rem;
-      }
-
-      .small-note {
-        font-size: 0.8rem;
-        margin-top: 0.8rem;
-      }
+      .value { font-size: 2rem; }
+      .label { font-size: 0.7rem; }
+      .small-note { font-size: 0.8rem; margin-top: 0.8rem; }
 
       .bottom-panel {
         flex: 1;
-        align-items: flex-start;    /* mantém o slide logo abaixo */
+        align-items: flex-start;
         padding-bottom: 10px;
       }
 
       .slideshow {
         width: 95%;
         height: auto;
-        aspect-ratio: 16 / 9;       /* mantém proporção ideal do slide */
+        aspect-ratio: 16 / 9;
       }
     }
   </style>
@@ -198,7 +187,8 @@
     </div>
   </div>
 
-  <audio id="heartBeat" src="batimento_cardiaco.wav" preload="auto"></audio>
+  <!-- Áudio -->
+  <audio id="heartBeat" src="batimento_cardiaco.mp3" preload="auto" loop></audio>
 
   <script>
     const daysEl = document.getElementById('days');
@@ -214,11 +204,7 @@
 
     function pad(n){ return String(n).padStart(2,'0'); }
 
-    function playHeartBeat() {
-      heartBeat.currentTime = 0;
-      heartBeat.play();
-    }
-
+    // 🕒 Contagem regressiva
     function updateCountdown(){
       const now = new Date();
       let diff = Math.max(targetDate - now,0);
@@ -232,8 +218,6 @@
       hoursEl.textContent = pad(hours);
       minutesEl.textContent = pad(minutes);
       secondsEl.textContent = pad(seconds);
-
-      playHeartBeat();
 
       if(totalSeconds === 0){
         clearInterval(intervalId);
@@ -249,30 +233,29 @@
 
     startInterval();
 
-    // Reinicia contador ao clicar no slide
-    slideshow.addEventListener('click', () => {
-      clearInterval(intervalId);
-      startInterval();
-    });
+    // 🎵 Música independente
+    heartBeat.volume = 0.5;
+    heartBeat.loop = true;
+    document.body.addEventListener('click', () => {
+      heartBeat.play().catch(err => console.log(err));
+    }, { once: true });
 
-    // Slideshow
+    // 📸 Slideshow
     const loadingText = document.getElementById('loadingText');
-    const totalSlides = 46;
+    const totalSlides = 46; // ajuste se tiver mais ou menos
     const slides = [];
     let current = 0;
 
     for (let i = 0; i < totalSlides; i++) {
       const img = document.createElement('img');
-      img.src = `Slide${i + 1}.PNG`;
+      img.src = `slides/Slide${i + 1}.PNG`;
       img.alt = `Slide ${i + 1}`;
       slideshow.appendChild(img);
       slides.push(img);
     }
 
     function showSlide(index) {
-      slides.forEach((img, i) => {
-        img.classList.toggle('active', i === index);
-      });
+      slides.forEach((img, i) => img.classList.toggle('active', i === index));
     }
 
     function startSlideshow() {
