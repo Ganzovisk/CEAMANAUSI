@@ -13,8 +13,16 @@
       font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; width: 100%; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
 
     body {
       display: flex;
@@ -24,7 +32,7 @@
       overflow: hidden;
     }
 
-    /* Relógio */
+    /* RELÓGIO */
     .top-panel {
       flex: 0 0 20%;
       display: flex;
@@ -34,10 +42,27 @@
       text-align: center;
       backdrop-filter: blur(8px);
       padding: 20px;
+      position: relative;
       z-index: 2;
     }
 
-    h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .qr-code {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 180px;
+      height: auto;
+      border-radius: 12px;
+      background: white;
+      padding: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
 
     .countdown {
       display: flex;
@@ -59,11 +84,26 @@
       justify-content: center;
     }
 
-    .value { font-size: 2.6rem; font-weight: 800; line-height: 1; }
-    .label { margin-top: 6px; font-size: 0.8rem; text-transform: uppercase; opacity: 0.85; }
-    .small-note { margin-top: 1rem; font-size: 0.9rem; opacity: 0.9; }
+    .value {
+      font-size: 2.6rem;
+      font-weight: 800;
+      line-height: 1;
+    }
 
-    /* Slide */
+    .label {
+      margin-top: 6px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+
+    .small-note {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    /* SLIDES */
     .bottom-panel {
       flex: 1;
       width: 100%;
@@ -98,7 +138,9 @@
       transition: opacity 1s ease-in-out;
     }
 
-    .slideshow img.active { opacity: 1; }
+    .slideshow img.active {
+      opacity: 1;
+    }
 
     .loading {
       position: absolute;
@@ -120,9 +162,12 @@
       100% { opacity: 0.3; }
     }
 
-    /* Responsivo */
+    /* RESPONSIVO */
     @media (max-width: 768px) {
-      body { overflow-y: auto; }
+
+      body {
+        overflow-y: auto;
+      }
 
       .top-panel {
         padding: 40px 10px;
@@ -130,6 +175,12 @@
         align-items: center;
         text-align: center;
         min-height: 45vh;
+      }
+
+      .qr-code {
+        width: 90px;
+        top: 10px;
+        left: 10px;
       }
 
       h1 {
@@ -148,9 +199,18 @@
         padding: 12px;
       }
 
-      .value { font-size: 2rem; }
-      .label { font-size: 0.7rem; }
-      .small-note { font-size: 0.8rem; margin-top: 0.8rem; }
+      .value {
+        font-size: 2rem;
+      }
+
+      .label {
+        font-size: 0.7rem;
+      }
+
+      .small-note {
+        font-size: 0.8rem;
+        margin-top: 0.8rem;
+      }
 
       .bottom-panel {
         flex: 1;
@@ -168,49 +228,83 @@
 </head>
 
 <body>
-  <!-- Relógio -->
+
+  <!-- TOPO -->
   <div class="top-panel">
+
+    <img src="qrcadastro.JPG" alt="QR Code" class="qr-code">
+
     <h1>Vamos juntos entregar este projeto em:</h1>
+
     <div class="countdown" id="countdown">
-      <div class="card"><div class="value" id="days">0</div><div class="label">Dias</div></div>
-      <div class="card"><div class="value" id="hours">00</div><div class="label">Horas</div></div>
-      <div class="card"><div class="value" id="minutes">00</div><div class="label">Minutos</div></div>
-      <div class="card"><div class="value" id="seconds">00</div><div class="label">Segundos</div></div>
+
+      <div class="card">
+        <div class="value" id="days">0</div>
+        <div class="label">Dias</div>
+      </div>
+
+      <div class="card">
+        <div class="value" id="hours">00</div>
+        <div class="label">Horas</div>
+      </div>
+
+      <div class="card">
+        <div class="value" id="minutes">00</div>
+        <div class="label">Minutos</div>
+      </div>
+
+      <div class="card">
+        <div class="value" id="seconds">00</div>
+        <div class="label">Segundos</div>
+      </div>
+
     </div>
+
     <div class="small-note" id="targetNote"></div>
+
   </div>
 
-  <!-- Slide -->
+  <!-- SLIDES -->
   <div class="bottom-panel">
     <div class="slideshow" id="slideshow">
       <div class="loading" id="loadingText">Carregando slides...</div>
     </div>
   </div>
 
-  <!-- Áudio -->
+  <!-- ÁUDIO -->
   <audio id="heartBeat" src="batimento_cardiaco.mp3" preload="auto" loop></audio>
 
   <script>
+
     const daysEl = document.getElementById('days');
     const hoursEl = document.getElementById('hours');
     const minutesEl = document.getElementById('minutes');
     const secondsEl = document.getElementById('seconds');
     const targetNote = document.getElementById('targetNote');
+
     const heartBeat = document.getElementById('heartBeat');
     const slideshow = document.getElementById('slideshow');
 
     const targetDate = new Date("2026-09-01T00:00:00");
+
     let intervalId = null;
 
-    function pad(n){ return String(n).padStart(2,'0'); }
+    function pad(n) {
+      return String(n).padStart(2, '0');
+    }
 
-    // 🕒 Contagem regressiva
-    function updateCountdown(){
+    /* CONTAGEM REGRESSIVA */
+
+    function updateCountdown() {
+
       const now = new Date();
-      let diff = Math.max(targetDate - now,0);
-      const totalSeconds = Math.floor(diff/1000);
-      const days = Math.floor(totalSeconds / (3600*24));
-      const hours = Math.floor((totalSeconds % (3600*24)) / 3600);
+
+      let diff = Math.max(targetDate - now, 0);
+
+      const totalSeconds = Math.floor(diff / 1000);
+
+      const days = Math.floor(totalSeconds / (3600 * 24));
+      const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
       const minutes = Math.floor((totalSeconds % 3600) / 60);
       const seconds = totalSeconds % 60;
 
@@ -219,62 +313,79 @@
       minutesEl.textContent = pad(minutes);
       secondsEl.textContent = pad(seconds);
 
-      if(totalSeconds === 0){
+      if (totalSeconds === 0) {
         clearInterval(intervalId);
-        targetNote.textContent = 'Prazo final atingido.';
+        targetNote.textContent = "Prazo final atingido.";
       }
     }
 
-    function startInterval(){
-      if(intervalId) return;
-      intervalId = setInterval(updateCountdown,1000);
+    function startInterval() {
+      if (intervalId) return;
+
+      intervalId = setInterval(updateCountdown, 1000);
       updateCountdown();
     }
 
     startInterval();
 
-    // 🎵 Música independente
+    /* ÁUDIO */
+
     heartBeat.volume = 0.5;
     heartBeat.loop = true;
+
     document.body.addEventListener('click', () => {
       heartBeat.play().catch(err => console.log(err));
     }, { once: true });
 
-    // 📸 Slideshow
+    /* SLIDES */
+
     const loadingText = document.getElementById('loadingText');
-    const totalSlides = 11; // ajuste se tiver mais ou menos
+
+    const totalSlides = 11;
+
     const slides = [];
+
     let current = 0;
 
     for (let i = 0; i < totalSlides; i++) {
+
       const img = document.createElement('img');
+
       img.src = `slides/Slide${i + 1}.PNG`;
+
       img.alt = `Slide ${i + 1}`;
+
       slideshow.appendChild(img);
+
       slides.push(img);
     }
 
     function showSlide(index) {
-      slides.forEach((img, i) => img.classList.toggle('active', i === index));
+
+      slides.forEach((img, i) => {
+        img.classList.toggle('active', i === index);
+      });
+
     }
 
     function startSlideshow() {
+
       loadingText.remove();
+
       showSlide(current);
+
       setInterval(() => {
+
         current = (current + 1) % totalSlides;
+
         showSlide(current);
+
       }, 8000);
     }
 
     window.addEventListener('load', startSlideshow);
+
   </script>
+
 </body>
 </html>
-
-
-
-
-
-
-
